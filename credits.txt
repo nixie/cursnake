@@ -1,0 +1,19 @@
+CURSNAKE
+
+game inspired by TEXTSNAKE
+(http://www.geocities.com/textsnake/)
+
+Author: Radek Fér <crrrrrr@seznam.cz>
+License: this source has no license yet  
+
+---
+
+17.3.2009 - ver.0.1           
+   basic snake with colors    
+18.3.2009 - ver.0.2           
+   added multiplayer          
+   improved menu              
+   map is now of type CONTENTS
+19.3.2009                     
+   added status line          
+   implemented tron-like mode 
