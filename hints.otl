@@ -1,0 +1,6 @@
+general
+	--gameplane will occupy all space we have(COLSxROWS)
+	--first we got menu {exit|start|...}
+
+TODO: funkce by nemely byt volany (row-2, col-2), ale (COORDS c) ...
+switches in menu
