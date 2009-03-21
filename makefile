@@ -6,16 +6,16 @@ DEBUG=-DDEBUG
 
 all: $(PROG)
 
-main.o: main.c	main.h snake.h
+main.o: main.c	main.h snake.h makefile
 	gcc -c $(CFLAGS) $(DEBUG) main.c
 
-snake.o: snake.c snake.h
+snake.o: snake.c snake.h makefile
 	gcc -c $(CFLAGS) $(DEBUG) snake.c
 
-arena.o: arena.c arena.h
+arena.o: arena.c arena.h makefile
 	gcc -c $(CFLAGS) $(DEBUG) arena.c
 
-common.o: common.c common.h
+common.o: common.c common.h makefile
 	gcc -c $(CFLAGS) $(DEBUG) common.c
 
 
