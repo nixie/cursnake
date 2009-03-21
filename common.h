@@ -1,5 +1,5 @@
 /***common.h***/
-// module for debugging
+// now for debugging
 #ifndef COMMON_H
 #define COMMON_H
 
