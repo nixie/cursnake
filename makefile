@@ -1,5 +1,6 @@
 CFLAGS=-std=c99 -Wall -pedantic -W -g 
 PROG=had
+LOG=log
 DEBUG=
 DEBUG=-DDEBUG
 
@@ -22,5 +23,5 @@ had: snake.o main.o arena.o common.o makefile
 	gcc -o $(PROG) -lcurses snake.o main.o arena.o common.o
 
 clean:
-	rm -vf $(PROG) ./*.o
+	rm -vf $(PROG) $(LOG) ./*.o
 
