@@ -1,4 +1,4 @@
-/*** main.c for snake game ***/
+/*** MAIN.c for snake game ***/
 #define _BSD_SOURCE
 #define _XOPEN_SOURCE 500
 
@@ -636,7 +636,9 @@ int start_game(void){
 				case FRUIT:			snake_score(&player2, SCORE_INCREMENT);
 									snake_move(&player2);
 									remove_fruit(p_fruits, player2.p_head->position);
-									snake_add_segment(&player2, BODY_INCREMENT);
+									if (g_gamestyle != FISHES){
+										snake_add_segment(&player2, BODY_INCREMENT);
+									}
 									break;
 			}
 		}
