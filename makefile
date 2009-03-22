@@ -3,6 +3,7 @@ PROG=had
 LOG=log
 DEBUG=
 DEBUG=-DDEBUG
+SRC=main.c main.h snake.h snake.c arena.h arena.c common.c common.h
 
 all: $(PROG)
 
@@ -23,5 +24,10 @@ had: snake.o main.o arena.o common.o makefile
 	gcc -o $(PROG) -lcurses snake.o main.o arena.o common.o
 
 clean:
-	rm -vf $(PROG) $(LOG) ./*.o
+	rm -vf $(PROG) $(LOG) ./*.o $(PROG).tar.gz
+
+tgz: $(SRC) makefile credits.txt
+	echo making source tarball
+	tar -cvzf $(PROG).tar.gz $(SRC) makefile credits.txt
+
 
