@@ -17,3 +17,7 @@ License: this source has no license yet
 19.3.2009                     
    added status line          
    implemented tron-like mode 
+26.3.2009                     
+   added possibility to play  
+   against computer. But it is
+   pretty bad(selfloops...)   
