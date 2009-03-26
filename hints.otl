@@ -4,3 +4,7 @@ general
 
 TODO: funkce by nemely byt volany (row-2, col-2), ale (COORDS c) ...
 switches in menu
+
+AI: cf = get_closest_fruit();
+	go_to_closest_fruit();		// sets next_dirrection in snake object
+	

@@ -64,6 +64,8 @@ int g_number_of_players;
 int g_fruits;
 int g_gamestyle;
 int g_mod_no_walls;
+int g_show_info;
+int g_autopilot;
 
 // players keys
 int keys_pl1[4];
@@ -78,6 +80,8 @@ void init_defaults(void){
 	g_fruits = INIT_FRUITS;
 	g_gamestyle = CLASSIC;
 	g_mod_no_walls = 0;
+	g_show_info=0;
+	g_autopilot = 0;
 
 	keys_pl1[0] = KEY_UP;
 	keys_pl1[1] = KEY_DOWN;
@@ -207,7 +211,7 @@ int set_cli_opts(int argc, char *argv[]){
 	
 	int opt;
 
-	while ( (opt=getopt(argc, argv, "s:f:h")) != -1){
+	while ( (opt=getopt(argc, argv, "s:f:hiw")) != -1){
 		switch(opt){
 			case 's':	g_speed = (1 / (float)atoi(optarg) ) * 1000;
 						break;
@@ -216,9 +220,15 @@ int set_cli_opts(int argc, char *argv[]){
 						break;
 
 			case 'h':	printf("\nCursnake - the curses snake game\n   usage: %s [OPTIONS]\n\n", GAME_NAME);
-						printf("\t-s SPEED\t\tSet initial speed\n\t-f NUM\t\tSet initial number of fruits\n");
-						printf("\t-h \t\t\tShow this help\n");
+						printf("\t-s SPEED\tSet initial speed\n\t-f NUM\t\tSet initial number of fruits\n");
+						printf("\t-w \t\tno walls, no crashes\n");
+						printf("\t-i \t\twhen playing, show info about everything\n\t-h \t\tShow this help\n");
 						return 1;
+						break;
+			case 'i':	g_show_info = 1;
+						break;
+
+			case 'w':	g_mod_no_walls = 1;
 						break;
 
 			case ':':	printf("option needs a value\n");
@@ -410,6 +420,20 @@ int get_last_keys(KEYPAIR_T *p_keys){
 		}else if( key == 'q' ){
 			// quit match
 			return 'q';
+		}else if( key == KEY_F(1)){
+			if (g_show_info){
+				g_show_info =0;
+			}else{
+				g_show_info =1;
+			}
+		}else if( key == KEY_F(2)){
+			if (g_number_of_players ==2){
+				if (g_autopilot){
+					g_autopilot = 0;
+				}else{
+					g_autopilot = 1;
+				}
+			}
 		}
 	}
 	
@@ -518,13 +542,6 @@ int start_game(void){
 
 		
 
-		if (g_gamestyle == CLASSIC || g_gamestyle == FISHES){
-			fruits_remaining = fruits_count( p_fruits);
-
-			if ( fruits_remaining == 0){
-				game_state = 0;
-			}
-		}
 	
 
 		snake_to_map( &player1, p_p_map, cols-2, rows-2);
@@ -533,15 +550,60 @@ int start_game(void){
 			snake_to_map( &player2, p_p_map, cols-2, rows-2);
 		}
 		
-		if (g_gamestyle == CLASSIC || g_gamestyle == FISHES ){
+		//if (g_gamestyle == CLASSIC || g_gamestyle == FISHES ){
 			fruits_to_map(p_fruits, p_p_map, cols-2, rows-2);	
-		}
+		//}
 
 		render_map(p_p_map, p_arena, cols-2, rows-2 );
-	
-		refresh();	
-		wrefresh(p_arena);
 
+
+		if (g_show_info){
+
+			wattrset(p_arena, A_NORMAL);
+			// find out closest fruit and print its coords
+			COORDS tmpc = get_closest_fruit(p_fruits, player1.p_head);
+			mvwprintw(p_arena, 1,1, "closest[%d,%d]", 
+					tmpc.x, 
+					tmpc.y);
+			int l = measure_lenght(&player1.p_head->position, &tmpc);
+			int i;
+			for (i=1; i<=l; i++){
+				mvwaddch(p_arena, rows-2, i, (chtype)'-');
+			}
+			// print head coords
+			mvwprintw(p_arena, 3,1, "   head[%d,%d]", 
+					player1.p_head->position.x,
+					player1.p_head->position.y);
+			//mvwprintw(p_arena, 3,1, "abs(headx-fruitx):%d", 
+			//		abs(player1.p_head->position.x - tmpc.x));
+			//mvwprintw(p_arena, 4,1, "abs(heady-fruity):%d",
+			//		abs(player1.p_head->position.y - tmpc.y));
+
+			//COORDS h = {25,3};
+			//COORDS l = {36,35};
+			//COORDS j = {27,33};
+			//mvwprintw(p_arena, 5,1, "mltest:[25,3]--[36,35]: %d",
+			//	measure_lenght(&h, &l));
+			//mvwprintw(p_arena, 6,1, "mltest:[27,33]--[36,35]: %d",
+			//		measure_lenght(&j, &l));
+			//mvwprintw(p_arena, 7,1, "mltest:[36,35]--[27,33]: %d",
+			//		measure_lenght(&l, &j));
+
+			print_fruit_coords(p_fruits, p_arena, player1.p_head->position);
+		}
+
+
+
+		if (g_gamestyle == CLASSIC || g_gamestyle == FISHES){
+			fruits_remaining = fruits_count( p_fruits);
+
+			if ( fruits_remaining == 0){
+				game_state = 0;
+			}
+		}
+
+		
+		
 		nodelay(stdscr, TRUE);
 		// process keys
 			//getlaskeys();
@@ -588,6 +650,17 @@ int start_game(void){
 				}
 			}
 		}
+
+		if (g_autopilot && g_number_of_players == 2){
+			// player2 is computer
+			COORDS go_to = get_closest_fruit(p_fruits, player2.p_head);
+			ai_set_dirr(&go_to, &player2);
+			if (is_antagonic(player2.curr_direction, player2.next_direction)){
+				player2.next_direction = player2.curr_direction;
+			}
+
+		}
+
 
 		
 		switch (map_ok(p_p_map, player1.p_head->position.x, player1.p_head->position.y, cols-2, rows-2, player1.next_direction)){
@@ -671,7 +744,11 @@ int start_game(void){
 		}else{
 			mvwprintw(p_arena, 0, 2, status_text);
 		}
-		
+	
+
+
+		refresh();	
+		wrefresh(p_arena);
 		
 		usleep(g_speed*1000);
 		
