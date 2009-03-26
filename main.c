@@ -651,12 +651,19 @@ int start_game(void){
 			}
 		}
 
-		if (g_autopilot && g_number_of_players == 2){
+		if (g_autopilot){
 			// player2 is computer
 			COORDS go_to = get_closest_fruit(p_fruits, player2.p_head);
 			ai_set_dirr(&go_to, &player2);
 			if (is_antagonic(player2.curr_direction, player2.next_direction)){
 				player2.next_direction = player2.curr_direction;
+			}
+
+
+			go_to = get_closest_fruit(p_fruits, player1.p_head);
+			ai_set_dirr(&go_to, &player1);
+			if (is_antagonic(player1.curr_direction, player1.next_direction)){
+				player1.next_direction = player1.curr_direction;
 			}
 
 		}
