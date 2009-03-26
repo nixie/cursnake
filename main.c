@@ -427,13 +427,13 @@ int get_last_keys(KEYPAIR_T *p_keys){
 				g_show_info =1;
 			}
 		}else if( key == KEY_F(2)){
-			if (g_number_of_players ==2){
-				if (g_autopilot){
-					g_autopilot = 0;
-				}else{
-					g_autopilot = 1;
-				}
+
+			if (g_autopilot){
+				g_autopilot = 0;
+			}else{
+				g_autopilot = 1;
 			}
+
 		}
 	}
 	
@@ -652,11 +652,14 @@ int start_game(void){
 		}
 
 		if (g_autopilot){
-			// player2 is computer
-			COORDS go_to = get_closest_fruit(p_fruits, player2.p_head);
-			ai_set_dirr(&go_to, &player2);
-			if (is_antagonic(player2.curr_direction, player2.next_direction)){
-				player2.next_direction = player2.curr_direction;
+			COORDS go_to;
+			if (g_number_of_players ==2){
+				// player2 is computer
+				go_to = get_closest_fruit(p_fruits, player2.p_head);
+				ai_set_dirr(&go_to, &player2);
+				if (is_antagonic(player2.curr_direction, player2.next_direction)){
+					player2.next_direction = player2.curr_direction;
+				}
 			}
 
 
