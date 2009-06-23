@@ -4,7 +4,7 @@ game inspired by TEXTSNAKE
 (http://www.geocities.com/textsnake/)
 
 Author: Radek Fér <crrrrrr@seznam.cz>
-License: this source has no license yet  
+License: GNU GPLv3 - see LICENCE.TXT  
 
 ---
 

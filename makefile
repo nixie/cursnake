@@ -28,6 +28,6 @@ clean:
 
 tgz: $(SRC) makefile credits.txt
 	echo making source tarball
-	tar -cvzf $(PROG).tar.gz $(SRC) makefile credits.txt
+	tar -cvzf $(PROG).tar.gz $(SRC) makefile credits.txt .git COPYING
 
 
