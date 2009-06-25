@@ -83,9 +83,10 @@ void snake_move(SNAKE *p_snake);
 // returns lenght of body
 int snake_get_lenght(SNAKE *p_snake);
 
-// for debugg purpose, print all info about given object
+// for debugg purpose, print all info about given snake
 void snake_describe(SNAKE *p_snake);
 
+// does: snake->score += increment
 // returns current score
 int snake_score(SNAKE *snake, int increment);
 
