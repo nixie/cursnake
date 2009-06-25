@@ -63,7 +63,7 @@ SEGMENT *init_fruits( int how_many, COORDS max){
 	// generate linked list
 	SEGMENT *p_first = (SEGMENT *)malloc( sizeof(SEGMENT) );
 	SEGMENT *p_tmp = p_first;
-	p_first->position.x = -1;	// we must not to delete this memory.
+	p_first->position.x = -1;	// we should not to delete this memory.(eg let snake to eat it)
 	p_first->position.y = -1;	// this pointer is gate to our list
 
 	int i;
@@ -100,6 +100,40 @@ void free_fruits( SEGMENT *fruits){
 		p_akt = p_nex;
 	}
 }//free_fruits()
+
+
+
+int fruits_count(SEGMENT *p_fruits){
+	// first item in linked list fruits is not actually fruit.
+	SEGMENT *p_tmp= p_fruits->p_next;
+	int i;
+	for( i =0; p_tmp != NULL; p_tmp = p_tmp->p_next){
+		i++;
+	}
+	return i;
+}
+
+void remove_fruit( SEGMENT *p_fruits, COORDS xy){
+	
+	//mvprintw(0,0, "first cycle - removing fruits");
+	//sleep(1);
+	SEGMENT *p_to_delete;
+	SEGMENT *p_parent= p_fruits;
+
+	while(p_parent->p_next != NULL){
+		//mvprintw(0,0, "first cycle - removing fruits");
+		//sleep(1);
+		if ( xy.x == p_parent->p_next->position.x && xy.y == p_parent->p_next->position.y){
+			p_to_delete = p_parent->p_next;
+			p_parent->p_next = p_parent->p_next->p_next;
+			free( (void *)p_to_delete);
+			break;
+		}
+		p_parent = p_parent->p_next;
+	}
+	return;
+}
+
 
 // helper for get_closest_fruit()
 int	measure_lenght(COORDS *from, COORDS *to){
@@ -201,15 +235,6 @@ void render_map( int **p_p_from, WINDOW *p_to, int sizex, int sizey){
 	}
 }
 
-int fruits_count(SEGMENT *p_fruits){
-	// first item in linked list fruits is not actually fruit.
-	SEGMENT *p_tmp= p_fruits->p_next;
-	int i;
-	for( i =0; p_tmp != NULL; p_tmp = p_tmp->p_next){
-		i++;
-	}
-	return i;
-}
 
 void clear_map(int **map, int x, int y){
 	int r,c;
@@ -220,31 +245,12 @@ void clear_map(int **map, int x, int y){
 	}
 }
 
-int remove_fruit( SEGMENT *p_fruits, COORDS xy){
-	
-	//mvprintw(0,0, "first cycle - removing fruits");
-	//sleep(1);
-	SEGMENT *p_to_delete;
-	SEGMENT *p_parent= p_fruits;
 
-	while(p_parent->p_next != NULL){
-		//mvprintw(0,0, "first cycle - removing fruits");
-		//sleep(1);
-		if ( xy.x == p_parent->p_next->position.x && xy.y == p_parent->p_next->position.y){
-			p_to_delete = p_parent->p_next;
-			p_parent->p_next = p_parent->p_next->p_next;
-			free( (void *)p_to_delete);
-			break;
-		}
-		p_parent = p_parent->p_next;
-	}
-	return 1;
-}
 
 void fruits_to_map( SEGMENT *p_fruits, int **map, int x, int y){
 	// go through list of fruits
 	// check if fruit.position < [x,y]
-	// && map[fruit.posi.y][fruit.posi.x] = CHAR_FRUIT
+	// && map[fruit.posi.y][fruit.posi.x] = FRUIT
 	
 	SEGMENT *p_tmp;
 	for (p_tmp = p_fruits->p_next; p_tmp != NULL; p_tmp = p_tmp->p_next){

@@ -39,25 +39,49 @@ typedef enum {FREE, WALL, PL1_BODY, PL1_HEAD, PL2_BODY, PL2_HEAD, FRUIT} CONTENT
 int ** alloc_map(int rows, int row_width);
 int dealloc_map( int **p_p_map, int rows);
 
+// init linked list od fruits and randomize their position
 SEGMENT *init_fruits(int how_many, COORDS max);
+
+// dealloc memory
 void free_fruits(SEGMENT *fruits);
+
+// this function returns number of fruits
 int fruits_count(SEGMENT *fruits);	
-int remove_fruit( SEGMENT *p_fruits, COORDS xy);
+
+// remove fruit identified by its position
+void remove_fruit( SEGMENT *p_fruits, COORDS xy);
+
+// render fruits to map
 void fruits_to_map( SEGMENT *fruits, int **map, int x, int y);
+
+// render snake
 void snake_to_map( SNAKE *snake, int **map, int x, int y);	
+
+// fill **map with FREE (space)
 void clear_map(int **map, int x, int y);
+
+// checkes what is on place, we want to go
 CONTENTS map_ok(int **map, int curr_x, int curr_y,
 	   					   int max_x, int max_y,
 					   	   NSEW direction);
+
+// draw map CONTENTS to WINDOW.
 void render_map( int **p_p_from, WINDOW *p_to, int sizex, int sizey);
+
+// returns nonzero if dir1 is antagonic (NORTH, SOUTH or WEST, EAST)
+int is_antagonic(int dir1, int dir2);
+
+
+
 
 // helper for get_closest_fruit()
 int	measure_lenght(COORDS *from, COORDS *to);
 
+// returns position of closest fruit
 COORDS get_closest_fruit(SEGMENT *fruits, COORDS *curr_pos);
+
+// sets direction of snake to get him to closest fruit - wery noninteligent :D
 void ai_set_dirr(COORDS *to, SNAKE *snake);
 
-// returns nonzero if dir1 is antagonic (NORTH, SOUTH or WEST, EAST)
-int is_antagonic(int dir1, int dir2);
 
 #endif
