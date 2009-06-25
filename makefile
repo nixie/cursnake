@@ -19,7 +19,7 @@ PROG=had
 LOG=log
 DEBUG=
 DEBUG=-DDEBUG
-SRC=main.c main.h snake.h snake.c arena.h arena.c common.c common.h
+SRC=main.c main.h snake.h snake.c arena.h arena.c common.c common.h ai.c ai.h
 
 all: $(PROG)
 
@@ -32,12 +32,16 @@ snake.o: snake.c snake.h makefile
 arena.o: arena.c arena.h makefile
 	gcc -c $(CFLAGS) $(DEBUG) arena.c
 
+ai.o: ai.c ai.h makefile
+	gcc -c $(CFLAGS) $(DEBUG) ai.c
+
 common.o: common.c common.h makefile
 	gcc -c $(CFLAGS) $(DEBUG) common.c
 
 
-had: snake.o main.o arena.o common.o makefile
-	gcc -o $(PROG) -lcurses snake.o main.o arena.o common.o
+
+had: snake.o main.o arena.o common.o ai.o makefile
+	gcc -o $(PROG) -lcurses snake.o main.o arena.o common.o ai.o
 
 clean:
 	rm -vf $(PROG) $(LOG) ./*.o $(PROG).tar.gz

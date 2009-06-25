@@ -28,6 +28,7 @@ along with Cursnake.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "common.h"
 #include "arena.h"
+#include "ai.h"
 #include "main.h"
 
 

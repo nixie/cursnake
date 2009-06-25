@@ -73,15 +73,4 @@ int is_antagonic(int dir1, int dir2);
 
 
 
-
-// helper for get_closest_fruit()
-int	measure_lenght(COORDS *from, COORDS *to);
-
-// returns position of closest fruit
-COORDS get_closest_fruit(SEGMENT *fruits, COORDS *curr_pos);
-
-// sets direction of snake to get him to closest fruit - wery noninteligent :D
-void ai_set_dirr(COORDS *to, SNAKE *snake);
-
-
 #endif
