@@ -60,7 +60,7 @@ int dealloc_map(int **p_p_map, int rows){
 }
 
 
-SEGMENT *init_fruits( int how_many, COORDS max){
+SEGMENT *init_fruits( int how_many, COORDS max, int **map){
 	// generate linked list
 	SEGMENT *p_first = (SEGMENT *)malloc( sizeof(SEGMENT) );
 	SEGMENT *p_tmp = p_first;
@@ -76,12 +76,36 @@ SEGMENT *init_fruits( int how_many, COORDS max){
 
 	// generate random places for fruits
 	p_tmp = p_first->p_next;
+	p_tmp_check;
 
 
+	int x,y; // to find out, if on this position on the map isnt already some fruit (or snake)
 	while (p_tmp != NULL){
 		// set coords		
-		p_tmp->position.x = rand() % (max.x-1);
-		p_tmp->position.y = rand() % (max.y-1);
+		x = rand() % (max.x-1);
+		y = rand() % (max.y-1);
+
+		if ( map[x][y] != FREE){
+			// we dont want to place fruit on snake
+			continue;
+		}
+
+		// check for duplicites in fruits (2 fruits in one location)
+		p_tmp_check = p_first->p_next;
+		while (p_tmp_check != NULL){
+			// go throught fruit list
+			if (p_tmp_check->position.x == x && p_tmp_check->position.y ==y){
+				x = rand() % (max.x-1);
+				y = rand() % (max.y-1);
+				// do this from start, until we get unused location for fruit
+				p_tmp_check = p_first->p_next;
+				continue;
+			}
+
+			p_tmp_check = p_tmp_check->p_next;
+		}
+
+		
 		// go to next fruit
 		p_tmp = p_tmp->p_next;
 	}
