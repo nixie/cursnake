@@ -54,6 +54,9 @@ void remove_fruit( SEGMENT *p_fruits, COORDS xy);
 // render fruits to map
 void fruits_to_map( SEGMENT *fruits, int **map, int x, int y);
 
+// for debugging purposes
+void print_fruit_coords(SEGMENT *p_fruits, WINDOW *win, COORDS coord);
+
 // render snake
 void snake_to_map( SNAKE *snake, int **map, int x, int y);	
 
