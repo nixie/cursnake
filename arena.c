@@ -26,6 +26,7 @@ along with Cursnake.  If not, see <http://www.gnu.org/licenses/>.
 #include "snake.h"
 #include "main.h"
 #include "arena.h"
+#include "ai.h" 	// measure_lenght()
 
 int **alloc_map( int rows, int row_width){
 	// first alloc pointers to rows

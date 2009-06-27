@@ -465,7 +465,7 @@ int start_game(void){
 	noecho();
 	
 	
-	int cols,rows;
+	unsigned int cols,rows;
 
 	// create arena window
 	WINDOW *p_arena = newwin (0, 0, 0, 0);	// whole screen
