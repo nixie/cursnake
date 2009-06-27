@@ -67,6 +67,7 @@ SEGMENT *init_fruits( int how_many, COORDS max, int **map){
 	p_first->position.x = -1;	// we should not to delete this memory.(eg let snake to eat it)
 	p_first->position.y = -1;	// this pointer is gate to our list
 
+	// allocate memory
 	int i;
 	for	(i=0; i<how_many; i++){
 		p_tmp->p_next = (SEGMENT *)malloc( sizeof(SEGMENT) );
@@ -76,7 +77,9 @@ SEGMENT *init_fruits( int how_many, COORDS max, int **map){
 
 	// generate random places for fruits
 	p_tmp = p_first->p_next;
-	p_tmp_check;
+
+	// pointer for check for duplicites
+	SEGMENT *p_tmp_check= p_first->p_next;
 
 
 	int x,y; // to find out, if on this position on the map isnt already some fruit (or snake)
@@ -85,7 +88,7 @@ SEGMENT *init_fruits( int how_many, COORDS max, int **map){
 		x = rand() % (max.x-1);
 		y = rand() % (max.y-1);
 
-		if ( map[x][y] != FREE){
+		if ( map[y][x] != FREE){
 			// we dont want to place fruit on snake
 			continue;
 		}
@@ -104,7 +107,9 @@ SEGMENT *init_fruits( int how_many, COORDS max, int **map){
 
 			p_tmp_check = p_tmp_check->p_next;
 		}
-
+		
+		p_tmp->position.x =	x;
+		p_tmp->position.y = y;
 		
 		// go to next fruit
 		p_tmp = p_tmp->p_next;
