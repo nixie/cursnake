@@ -40,7 +40,8 @@ int ** alloc_map(int rows, int row_width);
 int dealloc_map( int **p_p_map, int rows);
 
 // init linked list od fruits and randomize their position
-SEGMENT *init_fruits(int how_many, COORDS max);
+// **map parameter is used to check, if there is a space to put fruits somewhere.
+SEGMENT *init_fruits(int how_many, COORDS max, int **map);
 
 // dealloc memory
 void free_fruits(SEGMENT *fruits);

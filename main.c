@@ -554,7 +554,7 @@ int start_game(void){
 				free_fruits( p_fruits);
 			}
 
-			p_fruits = init_fruits( g_fruits, arena_coords_max);
+			p_fruits = init_fruits( g_fruits, arena_coords_max, p_p_map);
 			game_state = 1;
 		}
 
