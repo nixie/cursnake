@@ -315,7 +315,7 @@ int show_menu(char **contents)
 		int i;
 
 		// something like heading - bold it
-		if(	wattrset(p_menu_window, COLOR_PAIR(2) | A_BOLD| A_UNDERLINE) == ERR){		// highlited
+		if(	(int)wattrset(p_menu_window, COLOR_PAIR(2) | A_BOLD| A_UNDERLINE) == ERR){		// highlited
 			dputs("EE:heading color set failed");
 		}
 		mvwprintw(p_menu_window, 1, 1, contents[0]);		// print headline
@@ -332,7 +332,7 @@ int show_menu(char **contents)
 
 			// there we go through menu items
 			if(i == highlited ){				
-				if (wattrset(p_menu_window, COLOR_PAIR(2) | A_BOLD ) == ERR){
+				if ((int)wattrset(p_menu_window, COLOR_PAIR(2) | A_BOLD ) == ERR){
 					dputs("attron failed");
 				}
 				
@@ -348,7 +348,7 @@ int show_menu(char **contents)
 
 			}else{ // non highlited
 
-				if (wattrset(p_menu_window, COLOR_PAIR(3) ) == ERR){
+				if ((int)wattrset(p_menu_window, COLOR_PAIR(3) ) == ERR){
 					dputs("attron failed");
 				}
 
@@ -508,78 +508,78 @@ int start_game(void){
 	COORDS player2_coords= { cols-10, (rows-2)/2};
 	
 	
-	COORDS arena_coords_max={cols-2, rows-2};
-	SEGMENT *p_fruits = NULL;
+		COORDS arena_coords_max={cols-2, rows-2};
+		SEGMENT *p_fruits = NULL;
 
-	int game_state=2;	// 1 -normal cycle, 2 -start from begining, 0 -end
-	int no_wait_q_pressed = 0;
+		int game_state=2;	// 1 -normal cycle, 2 -start from begining, 0 -end
+		int no_wait_q_pressed = 0;
 
-	int fruits_remaining=1;
-	
-	KEYPAIR_T keys;
+		int fruits_remaining=1;
+		
+		KEYPAIR_T keys;
 
-	while(game_state >= 1){		 
-		dputs("move cycle started");
-		clear_map(p_p_map, cols-2, rows-2);	
-		status_text[0] = '\0';
-		// set keyboard to be nonblocking
-		// create map to represent content of every [x,y]
-		// create snake object
-		// create linked list of fruits
-		// then -count fruits, if fruits.count == 0 ->print_score(score);
-		// 		-draw fruits (map)
-		// 		-draw snake
-		// 		-find key pressed, if nothing pressed, continue in curr_direction
-		// 		-find what is the next [x,y]. If WALL -> return GAME_END
-		// 									  If FRUIT-> score snake, remove fruit from map also
-		//		-mvwprintw(p_arena, 10, 0, "score : %d", snake.score);
-		// 		-wait a while
-		if ( game_state == 2){
-			// reinit
-			
-			if (player1.p_head != NULL){
-				snake_delete_mem(&player1);
+		while(game_state >= 1){		 
+			dputs("move cycle started");
+			clear_map(p_p_map, cols-2, rows-2);	
+			status_text[0] = '\0';
+			// set keyboard to be nonblocking
+			// create map to represent content of every [x,y]
+			// create snake object
+			// create linked list of fruits
+			// then -count fruits, if fruits.count == 0 ->print_score(score);
+			// 		-draw fruits (map)
+			// 		-draw snake
+			// 		-find key pressed, if nothing pressed, continue in curr_direction
+			// 		-find what is the next [x,y]. If WALL -> return GAME_END
+			// 									  If FRUIT-> score snake, remove fruit from map also
+			//		-mvwprintw(p_arena, 10, 0, "score : %d", snake.score);
+			// 		-wait a while
+			if ( game_state == 2){
+				// reinit
+				
+				if (player1.p_head != NULL){
+					snake_delete_mem(&player1);
+				}
+				snake_init(&player1, player1_coords, EAST, PL1_BODY, PL1_HEAD);
+				
+				if (g_number_of_players == 2){
+					if(player2.p_head != NULL){
+						snake_delete_mem(&player2);
+					}
+					snake_init(&player2, player2_coords, WEST, PL2_BODY, PL2_HEAD);
+				}
+				
+				// reinit fruits
+				if (p_fruits != NULL){
+					free_fruits( p_fruits);
+				}
+
+				p_fruits = init_fruits( g_fruits, arena_coords_max);
+				game_state = 1;
 			}
-			snake_init(&player1, player1_coords, EAST, PL1_BODY, PL1_HEAD);
+
+			
+
+		
+
+			snake_to_map( &player1, p_p_map, cols-2, rows-2);
 			
 			if (g_number_of_players == 2){
-				if(player2.p_head != NULL){
-					snake_delete_mem(&player2);
-				}
-				snake_init(&player2, player2_coords, WEST, PL2_BODY, PL2_HEAD);
+				snake_to_map( &player2, p_p_map, cols-2, rows-2);
 			}
 			
-			// reinit fruits
-			if (p_fruits != NULL){
-				free_fruits( p_fruits);
-			}
+			//if (g_gamestyle == CLASSIC || g_gamestyle == FISHES ){
+				fruits_to_map(p_fruits, p_p_map, cols-2, rows-2);	
+			//}
 
-			p_fruits = init_fruits( g_fruits, arena_coords_max);
-			game_state = 1;
-		}
-
-		
-
-	
-
-		snake_to_map( &player1, p_p_map, cols-2, rows-2);
-		
-		if (g_number_of_players == 2){
-			snake_to_map( &player2, p_p_map, cols-2, rows-2);
-		}
-		
-		//if (g_gamestyle == CLASSIC || g_gamestyle == FISHES ){
-			fruits_to_map(p_fruits, p_p_map, cols-2, rows-2);	
-		//}
-
-		render_map(p_p_map, p_arena, cols-2, rows-2 );
+			render_map(p_p_map, p_arena, cols-2, rows-2 );
 
 
-		if (g_show_info){
+			if (g_show_info){
 
-			wattrset(p_arena, A_NORMAL);
-			// find out closest fruit and print its coords
-			COORDS tmpc = get_closest_fruit(p_fruits, player1.p_head);
+				wattrset(p_arena, A_NORMAL);
+				// find out closest fruit and print its coords
+				COORDS tmpc = get_closest_fruit(p_fruits, &(player1.p_head->position));
 			mvwprintw(p_arena, 1,1, "closest[%d,%d]", 
 					tmpc.x, 
 					tmpc.y);
@@ -673,7 +673,7 @@ int start_game(void){
 			COORDS go_to;
 			if (g_number_of_players ==2){
 				// player2 is computer
-				go_to = get_closest_fruit(p_fruits, player2.p_head);
+				go_to = get_closest_fruit(p_fruits, &player2.p_head->position);
 				ai_set_dirr(&go_to, &player2);
 				if (is_antagonic(player2.curr_direction, player2.next_direction)){
 					player2.next_direction = player2.curr_direction;
@@ -681,7 +681,7 @@ int start_game(void){
 			}
 
 
-			go_to = get_closest_fruit(p_fruits, player1.p_head);
+			go_to = get_closest_fruit(p_fruits, &(player1.p_head->position));
 			ai_set_dirr(&go_to, &player1);
 			if (is_antagonic(player1.curr_direction, player1.next_direction)){
 				player1.next_direction = player1.curr_direction;
@@ -879,6 +879,8 @@ NSEW key1_to_NSEW(int key){		// TODO: one function key_to_NSEW(int key[player][k
 	}else if (key == keys_pl1[3]){
 		return WEST;
 	}
+
+	return -1; // to get rid of warrnings, normaly this wouldnt happen
 }
 
 int NSEW_to_key1(NSEW dir){
@@ -905,6 +907,8 @@ NSEW key2_to_NSEW(int key){		// TODO: one function key_to_NSEW(int key[player][k
 	}else if (key == keys_pl2[3]){
 		return WEST;
 	}
+
+	return -1; 	// to get rid of warrnings, normaly this wouldnt happen
 }
 
 int NSEW_to_key2(NSEW dir){
