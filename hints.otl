@@ -1,10 +1,4 @@
-general
-	--gameplane will occupy all space we have(COLSxROWS)
-	--first we got menu {exit|start|...}
-
-TODO: funkce by nemely byt volany (row-2, col-2), ale (COORDS c) ...
-switches in menu
-
-AI: cf = get_closest_fruit();
-	go_to_closest_fruit();		// sets next_dirrection in snake object
-	
+funkce by nemely byt volany (row-2, col-2), ale (COORDS c) ...
+ai: more inteligent
+zrychlování
+při rozmistování ovoce nenechat na sebe položit 2 - had ukousne jedno a pak pod tím zbylým podjede ...
