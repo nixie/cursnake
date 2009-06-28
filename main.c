@@ -1,19 +1,19 @@
 /*
-This file is part of game called CURSNAKE.
+   This file is part of game called CURSNAKE.
 
-Cursnake is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+   Cursnake is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
-Cursnake is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+   Cursnake is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with Cursnake.  If not, see <http://www.gnu.org/licenses/>.
-*/
+   You should have received a copy of the GNU General Public License
+   along with Cursnake.  If not, see <http://www.gnu.org/licenses/>.
+   */
 
 /*** MAIN.c for snake game ***/
 #define _BSD_SOURCE
@@ -28,6 +28,7 @@ along with Cursnake.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "common.h"
 #include "arena.h"
+#include "ai.h"
 #include "main.h"
 
 
@@ -64,7 +65,7 @@ char *player_setup_menu[] = {
 };
 
 char *game_type_menu[] = {	// order and order matters - changing 
-							// switch value uses absolute access
+	// switch value uses absolute access
 	"> choose gamestyle",
 	"classical  snake", 		// CLASSIC
 	"!friendly walls",			// NOWALLS
@@ -117,12 +118,12 @@ int main(int argc, char *argv[])
 	init_defaults();
 
 	if (set_cli_opts(argc, argv) != 0){
-	   return 0;
+		return 0;
 	}
-		
+
 	//init curses
 	WINDOW *p_root;
-	
+
 	if ( (p_root = initscr()) == NULL){
 		fprintf(stderr, "screen cannot be initialized, ending\n");
 	}
@@ -149,11 +150,11 @@ int main(int argc, char *argv[])
 	int game = 1;
 	int options;
 
-	 
 
-	
+
+
 	while(game){// main - menu loop
-	dputs("entering main menu switch");
+		dputs("entering main menu switch");
 		switch( show_menu(main_menu) ){
 			case PLAY:	dputs("case :PLAY");
 						start_game();// game loop
@@ -188,20 +189,20 @@ int main(int argc, char *argv[])
 								break;
 
 			case DIFFICULTY: dputs("case :DIFFICULTY");
-							switch(show_menu(difficulty_menu)){
-								case BEGINNER:	g_speed = BEGINNER_SPEED;
+							 switch(show_menu(difficulty_menu)){
+								 case BEGINNER:	g_speed = BEGINNER_SPEED;
 												g_fruits = 10;
 												break;
-								case ADVANCED:	g_speed = ADVANCED_SPEED;
+								 case ADVANCED:	g_speed = ADVANCED_SPEED;
 												g_fruits = 30;
 												break;
-								case PROFI:		g_speed = PROFI_SPEED;
-												g_fruits = 50;
+								 case PROFI:		g_speed = PROFI_SPEED;
+													g_fruits = 50;
+													break;
+								 case -1:		options = 0;
 												break;
-								case -1:		options = 0;
-												break;
-							}
-							break;
+							 }
+							 break;
 			case CREDITS:	dputs("case: CREDITS");
 							rprint_credits(stdscr);
 							//flush_input();
@@ -225,7 +226,7 @@ int main(int argc, char *argv[])
 }//main
 
 int set_cli_opts(int argc, char *argv[]){
-	
+
 	int opt;
 
 	while ( (opt=getopt(argc, argv, "s:f:hiw")) != -1){
@@ -292,7 +293,7 @@ int show_menu(char **contents)
 	get_text_count(contents, &menu_lines, &menu_max_len);		
 
 	WINDOW *p_menu_window = newwin( menu_lines + MENU_ROWS_ADD, menu_max_len + MENU_COLS_ADD, MENU_STARTY, MENU_STARTX);
-	
+
 
 	box(p_menu_window, 0, 0);
 
@@ -314,14 +315,14 @@ int show_menu(char **contents)
 		int i;
 
 		// something like heading - bold it
-		if(	wattrset(p_menu_window, COLOR_PAIR(2) | A_BOLD| A_UNDERLINE) == ERR){		// highlited
+		if(	(int)wattrset(p_menu_window, COLOR_PAIR(2) | A_BOLD| A_UNDERLINE) == ERR){		// highlited
 			dputs("EE:heading color set failed");
 		}
 		mvwprintw(p_menu_window, 1, 1, contents[0]);		// print headline
 		wattrset(p_menu_window, COLOR_PAIR(1));				// normal
-		
+
 		char **p_p_menu = contents;			
-		
+
 		p_p_menu++;		// first is headline, so skip it
 		for(i=0; *p_p_menu != NULL; i++){
 
@@ -331,10 +332,10 @@ int show_menu(char **contents)
 
 			// there we go through menu items
 			if(i == highlited ){				
-				if (wattrset(p_menu_window, COLOR_PAIR(2) | A_BOLD ) == ERR){
+				if ((int)wattrset(p_menu_window, COLOR_PAIR(2) | A_BOLD ) == ERR){
 					dputs("attron failed");
 				}
-				
+
 				dputs("printing hi entry");
 				// test for switch
 				if (**p_p_menu == '!'){
@@ -347,7 +348,7 @@ int show_menu(char **contents)
 
 			}else{ // non highlited
 
-				if (wattrset(p_menu_window, COLOR_PAIR(3) ) == ERR){
+				if ((int)wattrset(p_menu_window, COLOR_PAIR(3) ) == ERR){
 					dputs("attron failed");
 				}
 
@@ -367,7 +368,7 @@ int show_menu(char **contents)
 					// it is normal entry 
 					mvwprintw(p_menu_window, 3+i, 2, *p_p_menu);
 				}
-				
+
 			}
 			p_p_menu++;
 		}
@@ -414,9 +415,9 @@ int show_menu(char **contents)
 }//show_menu()
 
 void flush_input(void){
-	
+
 	nodelay(stdscr, TRUE);
-	
+
 	while ( wgetch(stdscr) != ERR)
 		;
 
@@ -453,7 +454,7 @@ int get_last_keys(KEYPAIR_T *p_keys){
 
 		}
 	}
-	
+
 	return ERR;
 }
 
@@ -462,9 +463,9 @@ int start_game(void){
 	clear();
 	cbreak();
 	noecho();
-	
-	
-	int cols,rows;
+
+
+	unsigned int cols,rows;
 
 	// create arena window
 	WINDOW *p_arena = newwin (0, 0, 0, 0);	// whole screen
@@ -487,7 +488,7 @@ int start_game(void){
 		sleep(2);
 		return 1;
 	}
-	
+
 	clear_map(p_p_map, cols-2, rows-2);
 
 	dputs("creating snake object...");
@@ -505,8 +506,8 @@ int start_game(void){
 
 	COORDS player1_coords={ 10,(rows-2)/2};		// c,r    (x,y)	
 	COORDS player2_coords= { cols-10, (rows-2)/2};
-	
-	
+
+
 	COORDS arena_coords_max={cols-2, rows-2};
 	SEGMENT *p_fruits = NULL;
 
@@ -514,7 +515,7 @@ int start_game(void){
 	int no_wait_q_pressed = 0;
 
 	int fruits_remaining=1;
-	
+
 	KEYPAIR_T keys;
 
 	while(game_state >= 1){		 
@@ -535,40 +536,40 @@ int start_game(void){
 		// 		-wait a while
 		if ( game_state == 2){
 			// reinit
-			
+
 			if (player1.p_head != NULL){
 				snake_delete_mem(&player1);
 			}
 			snake_init(&player1, player1_coords, EAST, PL1_BODY, PL1_HEAD);
-			
+
 			if (g_number_of_players == 2){
 				if(player2.p_head != NULL){
 					snake_delete_mem(&player2);
 				}
 				snake_init(&player2, player2_coords, WEST, PL2_BODY, PL2_HEAD);
 			}
-			
+
 			// reinit fruits
 			if (p_fruits != NULL){
 				free_fruits( p_fruits);
 			}
 
-			p_fruits = init_fruits( g_fruits, arena_coords_max);
+			p_fruits = init_fruits( g_fruits, arena_coords_max, p_p_map);
 			game_state = 1;
 		}
 
-		
 
-	
+
+
 
 		snake_to_map( &player1, p_p_map, cols-2, rows-2);
-		
+
 		if (g_number_of_players == 2){
 			snake_to_map( &player2, p_p_map, cols-2, rows-2);
 		}
-		
+
 		//if (g_gamestyle == CLASSIC || g_gamestyle == FISHES ){
-			fruits_to_map(p_fruits, p_p_map, cols-2, rows-2);	
+		fruits_to_map(p_fruits, p_p_map, cols-2, rows-2);	
 		//}
 
 		render_map(p_p_map, p_arena, cols-2, rows-2 );
@@ -578,7 +579,7 @@ int start_game(void){
 
 			wattrset(p_arena, A_NORMAL);
 			// find out closest fruit and print its coords
-			COORDS tmpc = get_closest_fruit(p_fruits, player1.p_head);
+			COORDS tmpc = get_closest_fruit(p_fruits, &(player1.p_head->position));
 			mvwprintw(p_arena, 1,1, "closest[%d,%d]", 
 					tmpc.x, 
 					tmpc.y);
@@ -619,20 +620,10 @@ int start_game(void){
 			}
 		}
 
-		
-		
+
+
 		nodelay(stdscr, TRUE);
-		// process keys
-			//getlaskeys();
-			//for each snake update next directions(based on keys)
-			//next directions then uses snake_move() and snake_try_move()
-		//	if (snake_try_move(NSEW dir) != OK){
-		//		//tento had to prohral - nastav flag zabiti
-		//	if (next_snake_try_move(NSEW dir) != OK){
-		//		// i tento had je KO - nastav flag zabiti
-		// set gamestate to 0 if somebody died - this exits the arena loop
-		// show statistics
-	
+
 		if ( get_last_keys(&keys) == 'q'){
 			// quit match
 			player1.score = 0;
@@ -642,7 +633,7 @@ int start_game(void){
 			game_state = 0;
 			no_wait_q_pressed = 1;
 		}
-		
+
 		if (keys.key1 == ERR){
 			// pl1 now pressed nothing
 			player1.next_direction = player1.curr_direction;
@@ -672,7 +663,7 @@ int start_game(void){
 			COORDS go_to;
 			if (g_number_of_players ==2){
 				// player2 is computer
-				go_to = get_closest_fruit(p_fruits, player2.p_head);
+				go_to = get_closest_fruit(p_fruits, &player2.p_head->position);
 				ai_set_dirr(&go_to, &player2);
 				if (is_antagonic(player2.curr_direction, player2.next_direction)){
 					player2.next_direction = player2.curr_direction;
@@ -680,7 +671,7 @@ int start_game(void){
 			}
 
 
-			go_to = get_closest_fruit(p_fruits, player1.p_head);
+			go_to = get_closest_fruit(p_fruits, &(player1.p_head->position));
 			ai_set_dirr(&go_to, &player1);
 			if (is_antagonic(player1.curr_direction, player1.next_direction)){
 				player1.next_direction = player1.curr_direction;
@@ -689,7 +680,7 @@ int start_game(void){
 		}
 
 
-		
+
 		switch (map_ok(p_p_map, player1.p_head->position.x, player1.p_head->position.y, cols-2, rows-2, player1.next_direction)){
 			case FREE:			if (g_gamestyle == TRON){
 									snake_add_segment(&player1, 1);
@@ -716,7 +707,7 @@ int start_game(void){
 		}
 
 		if (g_number_of_players == 2){
-		// do the same for second player
+			// do the same for second player
 			switch (map_ok(p_p_map, player2.p_head->position.x, player2.p_head->position.y, cols-2, rows-2, player2.next_direction)){
 				case FREE:			if (g_gamestyle == TRON){
 										snake_add_segment(&player2, 2);
@@ -742,7 +733,7 @@ int start_game(void){
 									break;
 			}
 		}
-	
+
 		// set colors to status line colors and leave message
 		wattrset(p_arena, COLOR_PAIR(4) | A_STANDOUT | A_BOLD);
 
@@ -765,27 +756,27 @@ int start_game(void){
 				strncat(status_text, text_buffer, STATUS_TEXT_LEN);
 			}
 		}
-				
+
 		if (strlen(status_text) > cols){
 			mvwprintw(p_arena, 0, 2, "too little space for statusline");
 		}else{
 			mvwprintw(p_arena, 0, 2, status_text);
 		}
-	
+
 
 
 		refresh();	
 		wrefresh(p_arena);
-		
+
 		usleep(g_speed*1000);
-		
+
 	}
 
 	wclear(p_arena);
-	
+
 	if (g_number_of_players == 1){
 		player1.num_of_lifes > 0 ? 	mvwprintw(p_arena, (rows-2)/2, 10, "You've made it !") :
-								   	mvwprintw(p_arena, (rows-2)/2, 10, "You did NOT made it !");
+			mvwprintw(p_arena, (rows-2)/2, 10, "You did NOT made it !");
 	}else if(g_number_of_players ==2){
 		// test who is the winner
 		if (player1.num_of_lifes == player2.num_of_lifes){
@@ -793,11 +784,11 @@ int start_game(void){
 				mvwprintw(p_arena, (rows-2)/2, 10, "nobody wins !");
 			}else{
 				player1.score > player2.score ?	mvwprintw(p_arena, (rows-2)/2, 10, "%s wins!", player1.name):
-												mvwprintw(p_arena, (rows-2)/2, 10, "%s wins!", player2.name);
+					mvwprintw(p_arena, (rows-2)/2, 10, "%s wins!", player2.name);
 			}
 		}else{
 			player1.num_of_lifes > player2.num_of_lifes ?	mvwprintw(p_arena, (rows-2)/2, 10, "%s wins!", player1.name):
-															mvwprintw(p_arena, (rows-2)/2, 10, "%s wins!", player2.name);
+				mvwprintw(p_arena, (rows-2)/2, 10, "%s wins!", player2.name);
 		}
 	}
 
@@ -838,17 +829,17 @@ void rprint_credits(WINDOW *win){
 
 		clear();
 		int row_count = 1;				// on which row we start printing
-			
+
 		int buff_size = 100;
 		int win_len = getmaxx(win);				
 		int len;
 
 		int col_offset;					// place output in the middle of window
-		
+
 		char buff[buff_size];
 		wattrset(win, COLOR_PAIR(3) | A_BOLD);
 		while ( fgets(buff, buff_size, fr ) != NULL ){	// print it
-			
+
 			len = strlen(buff);
 			col_offset = (win_len - len) / 2;			// place output in the middle of window
 			if (len > win_len){
@@ -878,6 +869,8 @@ NSEW key1_to_NSEW(int key){		// TODO: one function key_to_NSEW(int key[player][k
 	}else if (key == keys_pl1[3]){
 		return WEST;
 	}
+
+	return -1; // to get rid of warrnings, normaly this wouldnt happen
 }
 
 int NSEW_to_key1(NSEW dir){
@@ -904,6 +897,8 @@ NSEW key2_to_NSEW(int key){		// TODO: one function key_to_NSEW(int key[player][k
 	}else if (key == keys_pl2[3]){
 		return WEST;
 	}
+
+	return -1; 	// to get rid of warrnings, normaly this wouldnt happen
 }
 
 int NSEW_to_key2(NSEW dir){
@@ -923,7 +918,7 @@ int NSEW_to_key2(NSEW dir){
 
 void wait_for_key(int how_long){
 	sleep(how_long);
-	
+
 	flush_input();		// internaly calls nodelay(TRUE);
 	nodelay(stdscr, FALSE);
 	getch();

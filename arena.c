@@ -26,6 +26,7 @@ along with Cursnake.  If not, see <http://www.gnu.org/licenses/>.
 #include "snake.h"
 #include "main.h"
 #include "arena.h"
+#include "ai.h" 	// measure_lenght()
 
 int **alloc_map( int rows, int row_width){
 	// first alloc pointers to rows
@@ -59,13 +60,14 @@ int dealloc_map(int **p_p_map, int rows){
 }
 
 
-SEGMENT *init_fruits( int how_many, COORDS max){
+SEGMENT *init_fruits( int how_many, COORDS max, int **map){
 	// generate linked list
 	SEGMENT *p_first = (SEGMENT *)malloc( sizeof(SEGMENT) );
 	SEGMENT *p_tmp = p_first;
 	p_first->position.x = -1;	// we should not to delete this memory.(eg let snake to eat it)
 	p_first->position.y = -1;	// this pointer is gate to our list
 
+	// allocate memory
 	int i;
 	for	(i=0; i<how_many; i++){
 		p_tmp->p_next = (SEGMENT *)malloc( sizeof(SEGMENT) );
@@ -76,11 +78,39 @@ SEGMENT *init_fruits( int how_many, COORDS max){
 	// generate random places for fruits
 	p_tmp = p_first->p_next;
 
+	// pointer for check for duplicites
+	SEGMENT *p_tmp_check= p_first->p_next;
 
+
+	int x,y; // to find out, if on this position on the map isnt already some fruit (or snake)
 	while (p_tmp != NULL){
 		// set coords		
-		p_tmp->position.x = rand() % (max.x-1);
-		p_tmp->position.y = rand() % (max.y-1);
+		x = rand() % (max.x-1);
+		y = rand() % (max.y-1);
+
+		if ( map[y][x] != FREE){
+			// we dont want to place fruit on snake
+			continue;
+		}
+
+		// check for duplicites in fruits (2 fruits in one location)
+		p_tmp_check = p_first->p_next;
+		while (p_tmp_check != NULL){
+			// go throught fruit list
+			if (p_tmp_check->position.x == x && p_tmp_check->position.y ==y){
+				x = rand() % (max.x-1);
+				y = rand() % (max.y-1);
+				// do this from start, until we get unused location for fruit
+				p_tmp_check = p_first->p_next;
+				continue;
+			}
+
+			p_tmp_check = p_tmp_check->p_next;
+		}
+		
+		p_tmp->position.x =	x;
+		p_tmp->position.y = y;
+		
 		// go to next fruit
 		p_tmp = p_tmp->p_next;
 	}
@@ -134,43 +164,6 @@ void remove_fruit( SEGMENT *p_fruits, COORDS xy){
 	return;
 }
 
-
-// helper for get_closest_fruit()
-int	measure_lenght(COORDS *from, COORDS *to){
-	int len;
-
-	len = abs(from->x - to->x);
-	len += abs(from->y - to->y);
-	return len;
-}
-
-COORDS get_closest_fruit(SEGMENT *fruits, COORDS *curr_pos){
-	SEGMENT *actual_fruit = fruits->p_next;	// first item isn't a fruit
-	
-	COORDS ret_null = {0,0};
-	if (actual_fruit == NULL){
-		return ret_null;
-	}
-
-	// init variables
-	COORDS closest_fruit_coords = actual_fruit->position;
-	int tmp_lenght; 
-	int min_path_lenght = measure_lenght(curr_pos, &(actual_fruit->position)) ;
-
-	actual_fruit = actual_fruit->p_next;
-	while (actual_fruit != NULL){
-		
-		tmp_lenght = measure_lenght(curr_pos, &(actual_fruit->position));
-		if (tmp_lenght < min_path_lenght){
-			closest_fruit_coords = actual_fruit->position;
-			min_path_lenght = tmp_lenght;
-		}		
-
-		actual_fruit = actual_fruit->p_next;
-	}
-	
-	return closest_fruit_coords;
-}
 
 void print_fruit_coords(SEGMENT *p_fruits, WINDOW *win, COORDS coord){
 	SEGMENT *p_s = p_fruits->p_next;
@@ -365,22 +358,4 @@ int is_antagonic(int dir1, int dir2){
 	return 0;
 }
 
-void ai_set_dirr(COORDS *to, SNAKE *snake){
-	
 
-	int x_diff = to->x - snake->p_head->position.x;
-	int y_diff = to->y - snake->p_head->position.y;
-	if (x_diff > 0){
-		snake->next_direction = EAST;
-	}else if(x_diff == 0){
-		if (y_diff > 0){
-			snake->next_direction = SOUTH;
-		}else if(y_diff == 0){
-			snake->next_direction = snake->curr_direction;
-		}else{
-			snake->next_direction = NORTH;
-		}
-	}else if(x_diff < 0){
-		snake->next_direction = WEST;
-	}
-}
