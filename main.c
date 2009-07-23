@@ -84,6 +84,7 @@ int g_gamestyle;
 int g_mod_no_walls;
 int g_show_info;
 int g_autopilot;
+int g_game_pause;
 
 // players keys
 int keys_pl1[4];
@@ -100,6 +101,7 @@ void init_defaults(void){
 	g_mod_no_walls = 0;
 	g_show_info=0;
 	g_autopilot = 0;
+	g_game_pause = 0;
 
 	keys_pl1[0] = KEY_UP;
 	keys_pl1[1] = KEY_DOWN;
@@ -452,6 +454,14 @@ int get_last_keys(KEYPAIR_T *p_keys){
 				g_autopilot = 1;
 			}
 
+		}else if( key == 'p'){
+			//togle pause
+			if (g_game_pause == 1){
+				g_game_pause = 0;
+			}
+			else{
+				g_game_pause = 1;
+			}
 		}
 	}
 
@@ -632,6 +642,12 @@ int start_game(void){
 			player2.num_of_lifes = 0;
 			game_state = 0;
 			no_wait_q_pressed = 1;
+		}
+
+		// if game is paused, do nothing
+		if (g_game_pause){
+			usleep(100000);
+			continue;
 		}
 
 		if (keys.key1 == ERR){
