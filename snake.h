@@ -29,6 +29,12 @@ along with Cursnake.  If not, see <http://www.gnu.org/licenses/>.
 #define BODY_MATERIAL	'x'
 #define HEAD_MATERIAL	'x'
 
+/* this way we know, where snakes body gone */
+#define BODY_MATERIAL_VERT 	'|'
+#define BODY_AMTERIAL_HORIZ '-'	/*todo:try _ (underline) */
+#define HEAD_MATERIAL_VERT	'^'
+
+
 #define SNAKE_NAME_LEN	20
 
 /************ structure defs ***********/
