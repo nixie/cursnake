@@ -5,9 +5,8 @@ game inspired by TEXTSNAKE
 
 Author: Radek Fér <crrrrrr@seznam.cz>
 License: GNU GPLv3 - see COPYING 
-
+sorry for my english in sources :)
 ---
-
 17.3.2009 - ver.0.1           
    basic snake with colors    
 18.3.2009 - ver.0.2           
