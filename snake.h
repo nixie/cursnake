@@ -46,9 +46,9 @@ typedef struct segment{
 
 typedef enum{
 	NORTH=0, 
-	SOUTH, 
-	EAST, 
-	WEST
+	SOUTH, //1
+	EAST, //2
+	WEST//3
 } NSEW;
 
 
