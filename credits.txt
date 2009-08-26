@@ -20,3 +20,5 @@ sorry for my english in sources :)
    added possibility to play  
    against computer. But it is
    pretty bad(selfloops...)   
+26.8.2009
+   ai improved

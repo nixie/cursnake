@@ -4,3 +4,5 @@ ai.c		přepsat strukturovaně
 zrychlování
 funkce by nemely byt volany (row-2, col-2), ale (COORDS c) ...
 
+možnost vybrat si na začátku materiál hlavy ( % , * , K apod) a těla (horiz (-) a vertik (|) )
+
