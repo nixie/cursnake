@@ -1,0 +1,6 @@
+snake.c 	tela hadu vykreslovat tak, aby bylo videt jakým směrem pře tím šel
+ai.c		přepsat strukturovaně
+
+zrychlování
+funkce by nemely byt volany (row-2, col-2), ale (COORDS c) ...
+

@@ -528,8 +528,9 @@ int start_game(void){
 
 	KEYPAIR_T keys;
 
+	dputs("game cycle started");
 	while(game_state >= 1){		 
-		dputs("move cycle started");
+		//dputs("move cycle started");
 		clear_map(p_p_map, cols-2, rows-2);	
 		status_text[0] = '\0';
 		// set keyboard to be nonblocking
@@ -690,14 +691,25 @@ int start_game(void){
 			go_to = get_closest_fruit(p_fruits, &(player1.p_head->position));
 			ai_set_dirr(&go_to, &player1);
 			if (is_antagonic(player1.curr_direction, player1.next_direction)){
+				// this 
 				player1.next_direction = player1.curr_direction;
+				// maked snake go straight on, endlesly
+				//
+				// We have turn left or right. Whether turn left or right depends on
+				// nothing, for now :)
+				/*if (player1.next_direction == NORTH || player1.next_direction == SOUTH){
+					player1.next_direction = EAST;
+				}else{
+					player1.next_direction = SOUTH;
+				}*/
 			}
 
 		}
 
 
 
-		switch (map_ok(p_p_map, player1.p_head->position.x, player1.p_head->position.y, cols-2, rows-2, player1.next_direction)){
+		CONTENTS next_content;
+		switch (next_content = map_ok(p_p_map, player1.p_head->position.x, player1.p_head->position.y, cols-2, rows-2, player1.next_direction)){
 			case FREE:			if (g_gamestyle == TRON){
 									snake_add_segment(&player1, 1);
 								}
@@ -712,6 +724,168 @@ int start_game(void){
 									usleep(LIFE_DOWN_DELAY_US);
 									game_state = 2;
 								}
+								if (g_autopilot){
+									// what to do when thare is a collision situation?
+									// ai should do this
+									//  1. not hit the walls, turn somewhere else.
+									//  2. not hit the oponents body, turn somewhere else.
+									//  3. if we are going to hit our own body in next step
+									//     do this: get nuber of body segment (seg_num) we are against.
+									//     Head has number 1. Next, go in the right direction
+									//     to not to finish in self loop - try to find the tail...
+									//     so increment the number of body segment we are againt and
+									//     go to some free place near this [seg_num+1] segment.
+									//
+									// so find other possible direction ai_set_dir2()
+									// and if the case is OUR_BODY dont run in self loop(intead of
+									// ai_set_dir2() use ai_set_dir_noloop().
+									// 
+									// to protect from self loops we need function to :
+									// 	- if ai_set_dirr() get us in trouble (she is primitive), call better,
+									// 	  but limited ai_set_dir_noloop() which only sees litle around head
+									//  - function which returns seg_num of segment on concrete position
+									//  - function which returns position of segment with concrete seg_num
+									//  - function which gets new direction from seg_num.position - seg_num+1.position
+									//  last 2 are helpers for ai_set_dir_noloop()
+									//  all is defined in ai.c
+									
+									int move_ok =0;
+
+
+									// test for selfloop
+									if (next_content == PL1_BODY)
+									{
+										COORDS seg_pos = player1.p_head->position;
+										COORDS seg_next_pos = {-1,-1};
+
+										// find what seg_num we are against.
+										// this could be a function
+										switch (player1.next_direction){
+											case NORTH: seg_pos.y--;
+														break;
+											case SOUTH: seg_pos.y++;
+														break;
+											case EAST:	seg_pos.x++;
+														break;
+											case WEST:	seg_pos.x--;
+														break;
+										}
+
+
+										// go throught segments, until we find some with this position,
+										// then save position of next segment.
+										
+										SEGMENT *p_temp;
+										for(p_temp = player1.p_head; p_temp->p_next != NULL; p_temp = p_temp->p_next){
+											if ( (p_temp->position.x == seg_pos.x) && (p_temp->position.y == seg_pos.y)){
+												// this is the segment we are standing against
+												seg_next_pos = p_temp->p_next->position;
+												break;
+											}else{
+											}
+												
+										}
+										
+										
+										// check if there was such segment (if wasnt, there is bad mistake in some code)
+										if (seg_next_pos.x == -1){
+											dputs("fatal error, exiting");
+											//game_state = 0;
+										}
+										
+										// now we have a vector (seg_pos - seg_next_pos), we find direction
+										// where to go, to get closest to tail.
+										NSEW dir;
+										int curve=0; // counter of directions setted (if we write dir twice, 
+													 // we have to do further processing...
+
+										
+										if (seg_pos.x > seg_next_pos.x){
+											dir = WEST;
+											curve++;
+										}else if(seg_pos.x < seg_next_pos.x){
+											dir = EAST;
+											curve++;
+										}else if(seg_pos.x == seg_next_pos.x){
+											// vertical barrier
+											if (seg_pos.y > seg_next_pos.y){
+												dir = NORTH;
+												curve++;
+											}else if(seg_pos.y < seg_next_pos.y){
+												dir = SOUTH;
+												curve++;
+											}else{
+												// seg_pos == seg_next_pos, which is nonreal
+												dputs("fatal error seg_pos == seg_next_pos, exiting");
+												//game_state = 0;
+											}
+										}
+
+										// try to move
+										if (map_ok(p_p_map, player1.p_head->position.x, player1.p_head->position.y, cols-2, rows-2,dir) == FREE){
+											player1.next_direction=dir;
+											move_ok=1;
+										}										
+										
+									}
+									else
+									{
+										if (player1.curr_direction == EAST || player1.curr_direction == WEST){
+											if (map_ok(p_p_map, player1.p_head->position.x, player1.p_head->position.y, cols-2, rows-2, SOUTH) == FREE){
+												player1.next_direction = SOUTH;
+												move_ok=1;
+											}else if(map_ok(p_p_map, player1.p_head->position.x, player1.p_head->position.y, cols-2, rows-2, NORTH) == FREE){
+												player1.next_direction = NORTH;
+												move_ok=1;
+											}
+										}else if(player1.curr_direction == SOUTH || player1.curr_direction == NORTH){
+											if (map_ok(p_p_map, player1.p_head->position.x, player1.p_head->position.y, cols-2, rows-2, EAST) == FREE){
+												player1.next_direction = EAST;
+												move_ok=1;
+											}else if(map_ok(p_p_map, player1.p_head->position.x, player1.p_head->position.y, cols-2, rows-2, WEST) == FREE){
+												player1.next_direction = WEST;
+												move_ok=1;
+											}
+										}
+									}
+
+
+									if (move_ok){
+										snake_move(&player1);
+									}else if(map_ok(p_p_map, player1.p_head->position.x, player1.p_head->position.y, cols-2, rows-2, player1.curr_direction) == FREE){
+										player1.next_direction = player1.curr_direction;
+										snake_move(&player1);
+									}else{
+										// try move wherever if FREE
+										
+										if (player1.curr_direction == EAST || player1.curr_direction == WEST){
+											if (map_ok(p_p_map, player1.p_head->position.x, player1.p_head->position.y, cols-2, rows-2, SOUTH) == FREE){
+												player1.next_direction = SOUTH;
+												move_ok=1;
+											}else if(map_ok(p_p_map, player1.p_head->position.x, player1.p_head->position.y, cols-2, rows-2, NORTH) == FREE){
+												player1.next_direction = NORTH;
+												move_ok=1;
+											}
+										}else if(player1.curr_direction == SOUTH || player1.curr_direction == NORTH){
+											if (map_ok(p_p_map, player1.p_head->position.x, player1.p_head->position.y, cols-2, rows-2, EAST) == FREE){
+												player1.next_direction = EAST;
+												move_ok=1;
+											}else if(map_ok(p_p_map, player1.p_head->position.x, player1.p_head->position.y, cols-2, rows-2, WEST) == FREE){
+												player1.next_direction = WEST;
+												move_ok=1;
+											}
+										}
+										if (move_ok){
+											snake_move(&player1);
+										}
+									}
+
+
+									
+
+								}
+
+
 								break;
 			case FRUIT:			snake_score(&player1, SCORE_INCREMENT);
 								snake_move(&player1);
@@ -739,6 +913,7 @@ int start_game(void){
 										usleep(LIFE_DOWN_DELAY_US);
 										game_state = 2;
 									}
+									// todo:better ai for 2nd player also
 									break;
 				case FRUIT:			snake_score(&player2, SCORE_INCREMENT);
 									snake_move(&player2);
@@ -758,7 +933,7 @@ int start_game(void){
 			if (player1.num_of_lifes == 0){
 				game_state = 0;
 			}else{
-				snprintf(text_buffer, BUFF_MAX, "%s(score:%d,lifes:%d)", player1.name, player1.score, player1.num_of_lifes);
+				snprintf(text_buffer, BUFF_MAX, "%s(score:%d,lifes:%d,curr_d:%d,next_d:%d)", player1.name, player1.score, player1.num_of_lifes, player1.curr_direction, player1.next_direction);
 				strncpy(status_text, text_buffer, STATUS_TEXT_LEN);
 				//status_add_s(buffer);
 			}

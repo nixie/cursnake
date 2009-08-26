@@ -14,7 +14,7 @@
 #	 You should have received a copy of the GNU General Public License
 #	 along with Cursnake.  If not, see <http://www.gnu.org/licenses/>.
 
-CFLAGS=-std=c99 -Wall -pedantic -W -g 
+CFLAGS=-std=c99 -Wall -pedantic -W -ggdb3 
 PROG=had
 LOG=log
 DEBUG=
