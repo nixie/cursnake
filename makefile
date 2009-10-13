@@ -50,4 +50,5 @@ tgz: $(SRC) makefile credits.txt
 	echo making source tarball
 	tar -cvzf $(PROG).tar.gz $(SRC) makefile credits.txt .git COPYING
 
-
+edit: 
+	vim -p $(SRC)
