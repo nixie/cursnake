@@ -19,9 +19,6 @@ along with Cursnake.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef MAIN_H
 #define MAIN_H
 
-
-#include "snake.h"
-
 #define MENU_ROWS_ADD	3
 #define MENU_COLS_ADD	4
 
