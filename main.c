@@ -453,17 +453,17 @@ int get_last_keys(KEYPAIR_T *p_keys){
 			p_keys->key2 = key;
 		}else if( key == 'q' ){
 			// quit match
-         pmesg(D_BASE, "q key pressed - quitting round\n");
+         pmesg(D_BASE, "   q key pressed - quitting round\n");
 			return 'q';
 		}else if( key == KEY_F(1)){
-         pmesg(D_BASE | D_ARENA, "F1 key pressed - toggling showing info\n");
+         pmesg(D_BASE | D_ARENA, "   F1 key pressed - toggling showing info\n");
 			if (g_show_info){
 				g_show_info =0;
 			}else{
 				g_show_info =1;
 			}
 		}else if( key == KEY_F(2)){
-         pmesg(D_BASE | D_SNAKE, "F1 key pressed - toggling autopilot\n");
+         pmesg(D_BASE | D_SNAKE, "   F1 key pressed - toggling autopilot\n");
 			if (g_autopilot){
 				g_autopilot = 0;
 			}else{
@@ -472,7 +472,7 @@ int get_last_keys(KEYPAIR_T *p_keys){
 
 		}else if( key == 'p'){
 			//togle pause
-         pmesg(D_BASE, "p key pressed - toggling pause\n");
+         pmesg(D_BASE, "   p key pressed - toggling pause\n");
 			if (g_game_pause == 1){
 				g_game_pause = 0;
 			}
@@ -505,7 +505,9 @@ int start_game(void){
 	getmaxyx(p_arena, rows, cols); 		// in rows, cols are dimensions now
 	char text_buffer[BUFF_MAX];					// to sprintf data and then status is
 
-	keypad(p_arena, TRUE);
+   if (keypad(p_arena, TRUE) == ERR){
+      pmesg(D_ERROR | D_BASE, "FAILED to set keypad on!\n");
+   }
 
 	int **p_p_map = alloc_map(rows-2, cols-2 );	
 	if (p_p_map == NULL){
