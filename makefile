@@ -1,4 +1,3 @@
-
 #	 This file is part of game called CURSNAKE.
 #	 
 #	 Cursnake is free software: you can redistribute it and/or modify
@@ -14,39 +13,39 @@
 #	 You should have received a copy of the GNU General Public License
 #	 along with Cursnake.  If not, see <http://www.gnu.org/licenses/>.
 
-CFLAGS=-std=c99 -Wall -pedantic -W -ggdb3 
+CFLAGS=-std=c99 -Wall -pedantic -W -ggdb3
+# uncomment this to disable debugging
+#CFLAGS=-std=c99 -Wall -pedantic -W -ggdb3 -DNDEBUG
+
 PROG=had
-LOG=log
-DEBUG=
-DEBUG=-DDEBUG
-SRC=main.c main.h snake.h snake.c arena.h arena.c common.c common.h ai.c ai.h
+SRC=main.[ch] snake.[ch] arena.[ch] common.[ch] ai.[ch]
 
 all: $(PROG)
 
 main.o: main.c	main.h snake.h makefile
-	gcc -c $(CFLAGS) $(DEBUG) main.c
+	gcc -c $(CFLAGS) main.c
 
 snake.o: snake.c snake.h makefile
-	gcc -c $(CFLAGS) $(DEBUG) snake.c
+	gcc -c $(CFLAGS) snake.c
 
 arena.o: arena.c arena.h makefile
-	gcc -c $(CFLAGS) $(DEBUG) arena.c
+	gcc -c $(CFLAGS) arena.c
 
 ai.o: ai.c ai.h makefile
-	gcc -c $(CFLAGS) $(DEBUG) ai.c
+	gcc -c $(CFLAGS) ai.c
 
 common.o: common.c common.h makefile
-	gcc -c $(CFLAGS) $(DEBUG) common.c
+	gcc -c $(CFLAGS) common.c
 
 debug.o: debug.c debug.h makefile
-	gcc -c $(CFLAGS) $(DEBUG) debug.c
+	gcc -c $(CFLAGS) debug.c
 
 
 had: snake.o main.o arena.o common.o ai.o debug.o makefile
 	gcc -o $(PROG) -lcurses snake.o main.o arena.o common.o ai.o debug.o
 
 clean:
-	rm -vf $(PROG) $(LOG) ./*.o $(PROG).tar.gz
+	rm -vf $(PROG) ./*.o $(PROG).tar.gz
 
 tgz: $(SRC) makefile credits.txt
 	echo making source tarball
