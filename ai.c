@@ -22,7 +22,6 @@ along with Cursnake.  If not, see <http://www.gnu.org/licenses/>.
 #include <unistd.h>
 #include <curses.h>
 
-#include "common.h"
 #include "snake.h"
 #include "main.h"
 #include "arena.h"
