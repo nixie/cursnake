@@ -14,8 +14,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Cursnake.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>

@@ -14,31 +14,29 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Cursnake.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-/***main.h***/
 #ifndef MAIN_H
 #define MAIN_H
 
 #define MENU_ROWS_ADD	3
 #define MENU_COLS_ADD	4
 
-#define MENU_STARTY	5
-#define MENU_STARTX	2*MENU_STARTY
+#define MENU_STARTY	   5
+#define MENU_STARTX	   2*MENU_STARTY
 
-
-#define CREDITS_FILE	"credits.txt"
-#define GAME_NAME   	"had"
-#define BUFF_MAX		50
+#define CREDITS_FILE	   "credits.txt"
+#define GAME_NAME   	   "had"
+#define BUFF_MAX		   50
 #define STATUS_TEXT_LEN	200
 #define LIFE_DOWN_DELAY_US	500000
 
-
 // every move hapens in *_SPEED miliseconds
+// _SPEED=1000/speed
 #define BEGINNER_SPEED	100 // -s 10	
 #define ADVANCED_SPEED	40  // -s 25
 #define PROFI_SPEED		25  // -s 40
 
-#define INIT_FRUITS 10
+#define INIT_FRUITS     10
+#define INIT_LIFES		3
 
 #define SCORE_INCREMENT	10
 #define BODY_INCREMENT	5
@@ -66,14 +64,11 @@ void wait_for_key(int how_long);
 void rprint_credits(WINDOW *win);
 int set_cli_opts(int argc, char *argv[]);
 
-// adds string or integer to status line
-
-
-
 // converts keycode(KEY_UP, KEY_LEFT...) to NORTH, SOUTH...
 NSEW key1_to_NSEW(int key);
 int NSEW_to_key1(NSEW dir);
 NSEW key2_to_NSEW(int key);
 int NSEW_to_key2(NSEW dir);
+
 #endif
 

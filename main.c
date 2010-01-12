@@ -30,6 +30,7 @@
 #include "arena.h"
 #include "ai.h"
 #include "main.h"
+#include "snake.h"
 
 char *main_menu[] = {
 	//first item in menu is name of the menu
@@ -116,6 +117,7 @@ void init_defaults(void){
 
 int main(int argc, char *argv[])
 {
+
 	init_defaults();
 
 	if (set_cli_opts(argc, argv) != 0){
@@ -130,9 +132,8 @@ int main(int argc, char *argv[])
    }
 #endif
 
-
-
 	//init curses
+   pmesg(D_BASE, "starting up curses\n");
 	WINDOW *p_root;
 
 	if ( (p_root = initscr()) == NULL){
@@ -160,6 +161,7 @@ int main(int argc, char *argv[])
 
 	int game = 1;
 	int options;
+
 
 
 

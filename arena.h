@@ -23,7 +23,6 @@ along with Cursnake.  If not, see <http://www.gnu.org/licenses/>.
 #define CHAR_FRUIT	'$'
 #define CHAR_WALL	'#'
 
-
 typedef enum {FREE, WALL, PL1_BODY, PL1_HEAD, PL2_BODY, PL2_HEAD, FRUIT} CONTENTS;
 
 int ** alloc_map(int rows, int row_width);
@@ -64,7 +63,5 @@ void render_map( int **p_p_from, WINDOW *p_to, int sizex, int sizey);
 
 // returns nonzero if dir1 is antagonic (NORTH, SOUTH or WEST, EAST)
 int is_antagonic(int dir1, int dir2);
-
-
 
 #endif

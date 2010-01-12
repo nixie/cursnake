@@ -14,18 +14,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Cursnake.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-
-/** snake.h **/
 #ifndef SNAKE_H
 #define SNAKE_H
 
-
-
-/************ some constants we need ***/
-#define INIT_LENGHT		4		// minimal value is 1
-#define INIT_LIFES		3
-#define INIT_COLOR	1
+#define INIT_LENGHT		4
+#define INIT_COLOR	   1
 #define BODY_MATERIAL	'x'
 #define HEAD_MATERIAL	'x'
 
@@ -34,10 +27,7 @@ along with Cursnake.  If not, see <http://www.gnu.org/licenses/>.
 #define BODY_AMTERIAL_HORIZ '-'	/*todo:try _ (underline) */
 #define HEAD_MATERIAL_VERT	'^'
 
-
 #define SNAKE_NAME_LEN	20
-
-/************ structure defs ***********/
 
 // snake body is a linked list ended with NULL pinter to next item
 typedef struct coords{
@@ -57,7 +47,6 @@ typedef enum{
 	WEST//3
 } NSEW;
 
-
 typedef struct snake{
 	SEGMENT *p_head;
 	NSEW curr_direction;
@@ -70,8 +59,6 @@ typedef struct snake{
 	char name[SNAKE_NAME_LEN];
 } SNAKE;
 
-
-/*********** f. declarations *************/
 // setup properties and alloc mem
 void snake_init(SNAKE *p_snake, COORDS xy, NSEW direction, int map_body, int map_head);	
 

@@ -1,8 +1,10 @@
-#include "debug.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 
-int msglevel=D_ALL; /* the higher, the more messages... */
+#include "debug.h"
+
+int msglevel=D_BASE; /* the higher, the more messages... */
 
 #if defined(NDEBUG) && defined(__GNUC__)
 /* Nothing. pmesg has been "defined away" in debug.h already. */

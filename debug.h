@@ -1,6 +1,5 @@
 #ifndef DEBUG_H
 #define DEBUG_H
-#include <stdarg.h>
 
 #define LOG_FILE "log.txt"
 
