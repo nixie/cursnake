@@ -38,10 +38,12 @@ ai.o: ai.c ai.h makefile
 common.o: common.c common.h makefile
 	gcc -c $(CFLAGS) $(DEBUG) common.c
 
+debug.o: debug.c debug.h makefile
+	gcc -c $(CFLAGS) $(DEBUG) debug.c
 
 
-had: snake.o main.o arena.o common.o ai.o makefile
-	gcc -o $(PROG) -lcurses snake.o main.o arena.o common.o ai.o
+had: snake.o main.o arena.o common.o ai.o debug.o makefile
+	gcc -o $(PROG) -lcurses snake.o main.o arena.o common.o ai.o debug.o
 
 clean:
 	rm -vf $(PROG) $(LOG) ./*.o $(PROG).tar.gz
