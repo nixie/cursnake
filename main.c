@@ -26,12 +26,10 @@
 #include <curses.h>
 #include <string.h>
 
-#include "common.h"
+#include "debug.h"
 #include "arena.h"
 #include "ai.h"
 #include "main.h"
-
-int msglevel=10;
 
 char *main_menu[] = {
 	//first item in menu is name of the menu
@@ -124,6 +122,16 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
+#ifndef NDEBUG
+   // debuging enabled - truncate file LOG_FILE
+   FILE *fw = fopen(LOG_FILE, "w");
+   if (fw == NULL){
+      fprintf(stderr, "attempt to truncate size of logfile failed\n");
+   }
+#endif
+
+
+
 	//init curses
 	WINDOW *p_root;
 
@@ -157,13 +165,13 @@ int main(int argc, char *argv[])
 
 
 	while(game){// main - menu loop
-		dputs("entering main menu switch");
+      pmesg(D_MENU, "entering base menu switch\n");
 		switch( show_menu(main_menu) ){
-			case PLAY:	dputs("case :PLAY");
+         case PLAY:	pmesg(D_MENU, "  case:PLAY\n");
 						start_game();// game loop
 						break;
 
-			case GAMESTYLE:	dputs("case :GAMESTYLE");
+			case GAMESTYLE:	pmesg(D_MENU, "  case:GAMESTYLE\n");
 							switch(show_menu(game_type_menu)){
 								case CLASSIC:	g_gamestyle = CLASSIC;
 												break;
@@ -181,7 +189,7 @@ int main(int argc, char *argv[])
 							}
 							break;
 
-			case PLAYER_SETUP:	dputs("case :PLAYER_SETUP");
+			case PLAYER_SETUP:	pmesg(D_MENU, "  case:PLAYER_SETUP\n");
 								switch(show_menu(player_setup_menu)){
 									case ONE:	g_number_of_players = 1;
 												break;
@@ -191,7 +199,7 @@ int main(int argc, char *argv[])
 								}
 								break;
 
-			case DIFFICULTY: dputs("case :DIFFICULTY");
+			case DIFFICULTY: pmesg(D_MENU, "  case:DIFFICULTY\n");
 							 switch(show_menu(difficulty_menu)){
 								 case BEGINNER:	g_speed = BEGINNER_SPEED;
 												g_fruits = 10;
@@ -206,26 +214,29 @@ int main(int argc, char *argv[])
 												break;
 							 }
 							 break;
-			case CREDITS:	dputs("case: CREDITS");
+			case CREDITS:	pmesg(D_MENU, "  case:CREDITS\n");
 							rprint_credits(stdscr);
 							//flush_input();
 							getch();
 							break;						
 			case -1:	
 
-			case EXIT:	dputs("case :EXIT or -1");
+			case EXIT:	pmesg(D_MENU, "  case:EXIT or -1\n");
 						game=0;
 						break;
 
-			default:	dputs("function show_menu() returned nonenumerated value!");
+			default:	pmesg(D_MENU | D_ERROR, "function show_menu() returned nonenumerated value!\n");
 						break;
 		}
 	}
 
 	// clean up curses
+   pmesg(D_BASE, "cleaning up curses\n");
 	endwin();
 
-	return 0;
+   pmesg(D_BASE, "exiting game\n");
+	return EXIT_SUCCESS;
+
 }//main
 
 int set_cli_opts(int argc, char *argv[]){
@@ -289,7 +300,7 @@ int get_text_count(char **menu, int *lines, int *line_max_len){
 
 int show_menu(char **contents)
 {
-	dputs("show_menu started");
+	pmesg(D_MENU, "show_menu started\n");
 	int menu_lines,
 		menu_max_len;
 
@@ -301,7 +312,7 @@ int show_menu(char **contents)
 	box(p_menu_window, 0, 0);
 
 	if ( p_menu_window == NULL){
-		dputs("EE:couldnt create menu window");
+		pmesg(D_MENU | D_ERROR, "couldnt create menu window\n");
 	}
 
 	int key=0;
@@ -319,7 +330,7 @@ int show_menu(char **contents)
 
 		// something like heading - bold it
 		if(	(int)wattrset(p_menu_window, COLOR_PAIR(2) | A_BOLD| A_UNDERLINE) == ERR){		// highlited
-			dputs("EE:heading color set failed");
+			pmesg(D_MENU | D_ERROR, "heading color set failed\n");
 		}
 		mvwprintw(p_menu_window, 1, 1, contents[0]);		// print headline
 		wattrset(p_menu_window, COLOR_PAIR(1));				// normal
@@ -330,16 +341,16 @@ int show_menu(char **contents)
 		for(i=0; *p_p_menu != NULL; i++){
 
 			//if (wattrset(p_menu_window, COLOR_PAIR(1) | A_BOLD ) != OK){	// default values
-			//	dputs("init	colors failtd");
+			//	pmesg(D_MENU | D_ERROR, "init	colors failtd\n");
 			//}
 
 			// there we go through menu items
 			if(i == highlited ){				
 				if ((int)wattrset(p_menu_window, COLOR_PAIR(2) | A_BOLD ) == ERR){
-					dputs("attron failed");
+					pmesg(D_MENU | D_ERROR, "attron failed\n");
 				}
 
-				dputs("printing hi entry");
+				//pmesg(D_MENU, "printing highlighted menu entry\n");
 				// test for switch
 				if (**p_p_menu == '!'){
 					// show only entry not ![01]
@@ -352,19 +363,19 @@ int show_menu(char **contents)
 			}else{ // non highlited
 
 				if ((int)wattrset(p_menu_window, COLOR_PAIR(3) ) == ERR){
-					dputs("attron failed");
+					pmesg(D_MENU | D_ERROR, "attron failed\n");
 				}
 
 				if (**p_p_menu == '!' ){ 
 					// this is a switch
 					// TODO: nouzovka
 					if (g_mod_no_walls != 0){ 
-						dputs("printing switch[on]");
+						pmesg(D_MENU, "printing switch[on]\n");
 						wattrset(p_menu_window, COLOR_PAIR(5) );
 						mvwprintw(p_menu_window, 3+i, 2, (*p_p_menu)+1);
 					}else{				
 						// it is a switch and is off
-						dputs("printing switch[off]");
+						pmesg(D_MENU, "printing switch[off]\n");
 						mvwprintw(p_menu_window, 3+i, 2, (*p_p_menu)+1);
 					}
 				}else{
@@ -376,7 +387,7 @@ int show_menu(char **contents)
 			p_p_menu++;
 		}
 
-		//dputs("menu printed, wrefresh()");
+		//pmesg(D_MENU, "menu printed, wrefresh()\n");
 		//touchwin(p_menu_window);
 		refresh();
 		touchwin(p_menu_window);
@@ -384,17 +395,17 @@ int show_menu(char **contents)
 		// wait for key
 		key = getch();	
 
-		//dputs("menu - some key was pressed");
+		//pmesg(D_MENU, "menu - some key was pressed\n");
 
 		if (key == KEY_UP || key == 'k'){
-			dputs("***************up");
+			pmesg(D_MENU, "   up key pressed\n");
 			if(highlited == 0){
 				highlited = menu_lines -2;
 			}else{		
 				highlited--;
 			}
 		}else if (key == KEY_DOWN || key == 'j'){
-			dputs("****************down");
+			pmesg(D_MENU, "   down key pressed\n");
 			if(highlited == menu_lines-2){
 				highlited = 0;
 			}else{
@@ -402,16 +413,18 @@ int show_menu(char **contents)
 			}
 		}else if (key == KEY_ENTER || key == '\n'){
 			delwin(p_menu_window);
-			dputs("enter\n");
+			pmesg(D_MENU, "   enter key pressed\n");
 			return highlited;
 		}else if (key == 'q'){
 			delwin(p_menu_window);
+         pmesg(D_MENU, "   q key pressed\n");
 			return -1;
 		}else if (key == 27){		// escape key
 			delwin(p_menu_window);
+         pmesg(D_MENU, "   esc key pressed\n");
 			return -1;
 		}else if (key == ERR){
-			dputs("got it");
+			pmesg(D_MENU, "   whats this?got it"); // TODO
 		}
 
 	}//menu loop
@@ -481,7 +494,7 @@ int start_game(void){
 	// create arena window
 	WINDOW *p_arena = newwin (0, 0, 0, 0);	// whole screen
 	if (!p_arena){
-		dputs("cannot create arena screen");
+		pmesg(D_BASE | D_ERROR | D_ARENA, "cannot create arena screen");
 		return 1;
 	}
 	box(p_arena, 0, 0);
@@ -493,16 +506,17 @@ int start_game(void){
 
 	int **p_p_map = alloc_map(rows-2, cols-2 );	
 	if (p_p_map == NULL){
-		mvprintw(0,0,"Not enough memory for map, exiting");
+      pmesg(D_BASE | D_ARENA | D_ERROR, "Not enough memory for map\n");
+		mvprintw(0,0,"Not enough memory for map, press any key...");
 		delwin(p_arena);
 		refresh();
-		sleep(2);
+      getch();    // wait for keypress, so user can read error message
 		return 1;
 	}
 
 	clear_map(p_p_map, cols-2, rows-2);
 
-	dputs("creating snake object...");
+	pmesg(D_BASE | D_SNAKE, "creating snake objects\n");
 
 	SNAKE player1;	
 	SNAKE player2;
@@ -529,9 +543,9 @@ int start_game(void){
 
 	KEYPAIR_T keys;
 
-	dputs("game cycle started");
+	pmesg(D_BASE, "game cycle started\n");
 	while(game_state >= 1){		 
-		//dputs("move cycle started");
+		//pmesg("move cycle started");
 		clear_map(p_p_map, cols-2, rows-2);	
 		status_text[0] = '\0';
 		// set keyboard to be nonblocking
@@ -790,7 +804,7 @@ int start_game(void){
 										
 										// check if there was such segment (if wasnt, there is bad mistake in some code)
 										if (seg_next_pos.x == -1){
-											dputs("fatal error, exiting");
+											pmesg(D_ARENA | D_SNAKE | D_ERROR, "fatal error, exiting\n");
 											//game_state = 0;
 										}
 										
@@ -817,7 +831,7 @@ int start_game(void){
 												curve++;
 											}else{
 												// seg_pos == seg_next_pos, which is nonreal
-												dputs("fatal error seg_pos == seg_next_pos, exiting");
+												pmesg(D_ARENA | D_SNAKE | D_ERROR, "fatal error seg_pos == seg_next_pos, exiting\n");
 												//game_state = 0;
 											}
 										}
