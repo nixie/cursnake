@@ -25,7 +25,7 @@ along with Cursnake.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdlib.h>
 #include <unistd.h>
 #include "snake.h"
-#include "common.h"
+#include "debug.h"
 
 
 char DIRECTIONS[][10]={"north", "south", "east", "west"};
@@ -34,7 +34,7 @@ extern int g_speed;
 void snake_init(SNAKE *p_snake, COORDS xy, NSEW direction, int map_body, int map_head){
 
 
-	dputs("inside snake_init()");
+	pmesg(D_SNAKE, "inside snake_init()\n");
 	//printf("   :::given coords : [%2d,%2d]\n", xy.x, xy.y); 
 
 	// setup snake properties

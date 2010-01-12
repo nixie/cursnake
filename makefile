@@ -18,7 +18,7 @@ CFLAGS=-std=c99 -Wall -pedantic -W -ggdb3
 #CFLAGS=-std=c99 -Wall -pedantic -W -ggdb3 -DNDEBUG
 
 PROG=had
-SRC=main.[ch] snake.[ch] arena.[ch] common.[ch] ai.[ch]
+SRC=main.[ch] snake.[ch] arena.[ch] ai.[ch] debug.[ch]
 
 all: $(PROG)
 
@@ -34,15 +34,12 @@ arena.o: arena.c arena.h makefile
 ai.o: ai.c ai.h makefile
 	gcc -c $(CFLAGS) ai.c
 
-common.o: common.c common.h makefile
-	gcc -c $(CFLAGS) common.c
-
 debug.o: debug.c debug.h makefile
 	gcc -c $(CFLAGS) debug.c
 
 
-had: snake.o main.o arena.o common.o ai.o debug.o makefile
-	gcc -o $(PROG) -lcurses snake.o main.o arena.o common.o ai.o debug.o
+had: snake.o main.o arena.o ai.o debug.o makefile
+	gcc -o $(PROG) -lcurses snake.o main.o arena.o ai.o debug.o
 
 clean:
 	rm -vf $(PROG) ./*.o $(PROG).tar.gz
