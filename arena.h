@@ -14,20 +14,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Cursnake.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-
 #ifndef ARENA_H
 #define ARENA_H
 
 #include "snake.h"
-
-#define INIT_FRUITS 10
-#define BEGINNER_SPEED	200		// every move hapens in miliseconds
-#define ADVANCED_SPEED	100
-#define PROFI_SPEED		50
-
-#define SCORE_INCREMENT	10
-#define BODY_INCREMENT	5
 
 #define CHAR_FREE	' '
 #define CHAR_FRUIT	'$'

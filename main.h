@@ -32,6 +32,18 @@ along with Cursnake.  If not, see <http://www.gnu.org/licenses/>.
 #define STATUS_TEXT_LEN	200
 #define LIFE_DOWN_DELAY_US	500000
 
+
+// every move hapens in *_SPEED miliseconds
+#define BEGINNER_SPEED	100 // -s 10	
+#define ADVANCED_SPEED	40  // -s 25
+#define PROFI_SPEED		25  // -s 40
+
+#define INIT_FRUITS 10
+
+#define SCORE_INCREMENT	10
+#define BODY_INCREMENT	5
+
+
 // this enums must be in tact with menu items from main.c
 typedef enum{PLAY=0, GAMESTYLE, DIFFICULTY, PLAYER_SETUP, CREDITS, EXIT} E_MENU_ITEMS;	
 typedef enum{BEGINNER=0, ADVANCED, PROFI} E_DIFFICULTY;
