@@ -31,6 +31,7 @@
 #include "ai.h"
 #include "main.h"
 
+int msglevel=10;
 
 char *main_menu[] = {
 	//first item in menu is name of the menu
