@@ -22,7 +22,7 @@ along with Cursnake.  If not, see <http://www.gnu.org/licenses/>.
 #include <unistd.h>
 #include <curses.h>
 
-#include "common.h"
+#include "debug.h"
 #include "snake.h"
 #include "main.h"
 #include "arena.h"
@@ -251,7 +251,8 @@ void fruits_to_map( SEGMENT *p_fruits, int **map, int x, int y){
 			map[p_tmp->position.y][p_tmp->position.x] = FRUIT;
 		}
 		else{
-			dputs("fruit_to_map() : fruit out of borders!");
+         // TODO-nahradit pomoci noveho debug interface
+			//dputs("fruit_to_map() : fruit out of borders!");
 		}
 	}
 }
@@ -270,7 +271,8 @@ void snake_to_map( SNAKE *p_snake, int **map, int x, int y){
 			count++;		
 		}
 		else{
-			dputs("snake_to_map() : snake out of borders!");
+
+			//dputs("snake_to_map() : snake out of borders!");
 		}
 	}
 }
