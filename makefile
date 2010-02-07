@@ -28,7 +28,8 @@ main.o: main.c	main.h snake.h makefile
 snake.o: snake.c snake.h makefile
 	gcc -c $(CFLAGS) snake.c
 
-arena.o: arena.c arena.h makefile
+# snake.h has BODY_MATERIAL
+arena.o: arena.c arena.h makefile snake.h 
 	gcc -c $(CFLAGS) arena.c
 
 ai.o: ai.c ai.h makefile
